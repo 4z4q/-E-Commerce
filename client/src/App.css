@@ -1,0 +1,7 @@
+body {
+  height: calc(100vh - 16px) !important;
+  box-sizing: border-box;
+  padding: 0;
+  font-family: Cairo !important;
+  font-weight: 600;
+}
