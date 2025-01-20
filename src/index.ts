@@ -6,6 +6,7 @@ import { seedInitialProducts } from "./services/productService";
 import cartRouter from "./routers/cartRouter";
 import productRouter from "./routers/productRouter";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 const port = process.env.PORT || 4001;
@@ -28,6 +29,14 @@ mongoose.connection.once("open", () => {
   app.use("/user", userRouter);
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
+
+  // خدمة الملفات الثابتة (مثل js, css, images)
+  app.use(express.static(path.join(__dirname, "build")));
+
+  // توجيه جميع المسارات غير المعروفة إلى index.html
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+  });
 
   // معالج الأخطاء العام (يجب أن يكون الأخير)
   app.use((err: any, req: any, res: any, next: any) => {
