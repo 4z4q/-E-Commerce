@@ -14,7 +14,8 @@ import UserCard from "./UserCard";
 import AddIcon from "@mui/icons-material/Add";
 import { EmptySearch } from "../components/EmptySearch";
 
-interface User {
+export interface User {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -22,7 +23,7 @@ interface User {
 }
 
 export default function UserManagemnt() {
-  const [users, setUsers] = useState<Array<any>>([]); // تعيين نوع البيانات كمصفوفة
+  const [users, setUsers] = useState<User[]>([]); // تعيين نوع البيانات كمصفوفة
   const [open, setOpen] = useState(false);
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
@@ -84,8 +85,7 @@ export default function UserManagemnt() {
       setOpen(false);
     } catch (error) {
       console.error("Error updating user:", error);
-    }
-    finally {
+    } finally {
       fetchUsers();
       setOpen(false);
     }
@@ -147,18 +147,22 @@ export default function UserManagemnt() {
           >
             <AddIcon />
           </Fab>
-          <Box
-            key={users._id}
-            sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}
-          >
-            {users.map((user) => (
-              <UserCard
-                key={user._id}
-                user={user}
-                onUpdateUser={handleUpdateUser}
-                onDeleteUser={handleDeleteUser}
-              />
-            ))}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+            {users.map(
+              (user: {
+                _id: string;
+                firstName: string;
+                lastName: string;
+                email: string;
+              }) => (
+                <UserCard
+                  key={user._id}
+                  user={user}
+                  onUpdateUser={handleUpdateUser}
+                  onDeleteUser={handleDeleteUser}
+                />
+              )
+            )}
           </Box>
         </>
       ) : (

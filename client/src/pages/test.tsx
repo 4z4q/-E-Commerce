@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import { Alert, Box, Button, TextField } from "@mui/material";
 import React, { useState } from "react";
 import Select from "react-select";
@@ -26,8 +25,6 @@ const EncryptApp: React.FC = () => {
   const [e, setE] = useState<string>("");
   const [n, setN] = useState<string>("");
 
-  const theme = useTheme();
-  const darkMode = theme.palette.mode === "dark";
 
   const handleEncrypt = async () => {
     if (!algorithm || !text || !key) {
@@ -48,7 +45,7 @@ const EncryptApp: React.FC = () => {
           ) {
             throw new Error("Invalid key for Hill cipher!");
           }
-        } catch (error) {
+        } catch {
           throw new Error("Invalid key format for Hill cipher!");
         }
       }
@@ -92,7 +89,7 @@ const EncryptApp: React.FC = () => {
     }
 
     try {
-     let  parsedKey = key;
+      let parsedKey = key;
       if (algorithm?.value === "hill") {
         try {
           parsedKey = JSON.parse(key);
@@ -103,7 +100,7 @@ const EncryptApp: React.FC = () => {
           ) {
             throw new Error("Invalid key for Hill cipher!");
           }
-        } catch (error) {
+        } catch {
           throw new Error("Invalid key format for Hill cipher!");
         }
       }
@@ -161,21 +158,6 @@ const EncryptApp: React.FC = () => {
           defaultValue={options[0]}
           onChange={(selectedOption) => setAlgorithm(selectedOption)}
           options={options}
-          classNames={{
-            input: () => (darkMode ? "text-gray-100" : "text-gray-900"),
-            singleValue: () => (darkMode ? "text-gray-100" : "text-gray-900"),
-            placeholder: () => (darkMode ? "text-gray-400" : "text-gray-500"),
-            indicatorSeparator: () => "hidden",
-            option: () =>
-              darkMode
-                ? "hover:!text-gray-800 dark:hover:text-gray-200"
-                : "hover:!text-gray-700 hover:text-gray-900",
-            menu: () =>
-              darkMode
-                ? "bg-gray-800 dark:text-gray-100"
-                : "bg-white text-gray-900",
-            menuList: () => (darkMode ? "dark:bg-gray-800" : "bg-white"),
-          }}
         />
       </Box>
       <Box

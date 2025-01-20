@@ -1,4 +1,15 @@
 import Select from "react-select";
+import { useTheme } from "@mui/material/styles";
+import { BASE_URL } from "../constants/baseUrl";
+import { useEffect, useState } from "react";
+import { Product } from "../types/Products";
+
+interface RegionMenuProps {
+  setFilteredProducts: (products: Product[]) => void;
+  product: Product[];
+}
+
+
 
 const options = [
   { value: "all electronics", label: "All Electronics" },
@@ -8,27 +19,18 @@ const options = [
   { value: "accessories", label: "Accessories" },
 ];
 
-import { useTheme } from "@mui/material/styles";
-import { BASE_URL } from "../constants/baseUrl";
-import {  useEffect, useState } from "react";
-
-interface RegionMenuProps {
-  setFilteredProducts: (products: string) => void;
-  product: [] | "";
-}
-
 const RegionMenu = ({ setFilteredProducts, product }: RegionMenuProps) => {
   const theme = useTheme();
   const darkMode = theme.palette.mode === "dark";
   const [region, setRegion] = useState("all electronics");
 
-  const handleRegionChange = (e) => {
-    const selectedRegion = e.label.toString().toLowerCase();
+  const handleRegionChange = (e: { label: string; value: string } | null) => {
+    if (!e) return;
+    const selectedRegion = e.value.toLowerCase();
     setRegion(selectedRegion);
 
-    // إذا كان الاختيار "all electronics"، استخدم البيانات المحلية
     if (selectedRegion === "all electronics") {
-      setFilteredProducts(product);
+      setFilteredProducts(product );
     }
 
     console.log(selectedRegion);
@@ -59,28 +61,13 @@ const RegionMenu = ({ setFilteredProducts, product }: RegionMenuProps) => {
         control: (base) => ({
           ...base,
           width: "200px",
-          // border: "none",
           boxShadow: "none",
         }),
       }}
       defaultValue={options[0]}
       onChange={handleRegionChange}
       options={options}
-      classNames={{
-        input: () => (darkMode ? "text-gray-100" : "text-gray-900"),
-        singleValue: () => (darkMode ? "text-gray-100" : "text-gray-900"),
-        placeholder: () => (darkMode ? "text-gray-400" : "text-gray-500"),
-        indicatorSeparator: () => "hidden",
-        option: () =>
-          darkMode
-            ? "hover:!text-gray-800 dark:hover:text-gray-200"
-            : "hover:!text-gray-700 hover:text-gray-900",
-        menu: () =>
-          darkMode
-            ? " bg-gray-800 dark:text-gray-100"
-            : "bg-white text-gray-900",
-        menuList: () => (darkMode ? "dark:bg-gray-800" : "bg-white"),
-      }}
+      className={darkMode ? "text-gray-100" : "text-gray-900"}
     />
   );
 };

@@ -5,8 +5,11 @@ import { Product } from "../types/Products";
 import { BASE_URL } from "../constants/baseUrl";
 import { EmptySearch } from "../components/EmptySearch";
 import RegionMenu from "../components/RegionMenu";
+
+
+
 export default function Products() {
-  const [product, setProduct] = useState<Product[]>([]);
+  const [product, setProduct] = useState< Product[]>([]);
   const [fillteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [error, setError] = useState(false);
 

@@ -34,7 +34,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         const cart = await response.json();
 
         const cartItemsMapped = cart.items.map(
-          ({ product, quantity, unitPrice }) => ({
+          ({ product, quantity, unitPrice }: CartItem) => ({
             productId: product._id,
             title: product.title,
             image: product.image,
@@ -46,9 +46,8 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         setCartItems(cartItemsMapped);
         setTotalAmount(cart.totalAmount);
         setError("");
-      } catch (error: Error) {
-        setError(error.message || "Something went wrong.");
-        // setCartItems(null);
+      } catch (error: unknown) {
+        setError((error as Error).message || "Something went wrong.");
       } finally {
         setLoading(false);
       }
@@ -59,8 +58,6 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const addItemToCart = async (productId: string) => {
     try {
-
-
       // Get Data From Backend
       const response = await fetch(`${BASE_URL}/cart/items`, {
         method: "POST",
@@ -88,7 +85,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       const cartItemsMapped = cart.items.map(
-        ({ product, quantity, unitPrice }) => ({
+        ({ product, quantity, unitPrice }: CartItem) => ({
           productId: product._id,
           title: product.title,
           image: product.image,
@@ -104,7 +101,6 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       console.log(errorS);
     }
   };
-
 
   const updateItemInCart = async (productId: string, quantity: number) => {
     try {
@@ -135,7 +131,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       const cartItemsMapped = cart.items.map(
-        ({ product, quantity, unitPrice }) => ({
+        ({ product, quantity, unitPrice }: CartItem) => ({
           productId: product._id,
           title: product.title,
           image: product.image,

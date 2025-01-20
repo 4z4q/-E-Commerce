@@ -1,4 +1,4 @@
-import { Box, Grid2, Skeleton } from "@mui/material";
+import { Box, Grid2 } from "@mui/material";
 import ProductCart from "../components/ProductCart";
 import { useEffect, useState } from "react";
 import { Product } from "../types/Products";

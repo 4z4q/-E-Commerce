@@ -1,4 +1,4 @@
-import { Box, Grid2 } from "@mui/material";
+import { Box } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { EmptySearch } from "../components/EmptySearch";
 import ShowMessage from "../components/ShowMessage";
@@ -17,8 +17,7 @@ function CartInfo() {
     fetchData.then((res) => res.json()).then((data) => setProduct(data));
   }, [id]);
 
-  console.log(product);
-  const { image, stock, title, price, category } = product ?? {};
+  const { image, quantity, title, unitPrice, category } = product ?? {};
 
   if (loading) {
     return <EmptySearch />;
@@ -60,10 +59,10 @@ function CartInfo() {
             sx={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: 3, 
+              gap: 3,
               padding: 2,
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", 
-              borderRadius: "12px", 
+              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+              borderRadius: "12px",
               height: "510px",
             }}
             className="mt-8 mb-8 shadow width-full"
@@ -75,7 +74,7 @@ function CartInfo() {
                 overflow: "hidden",
                 borderRadius: "12px",
                 padding: "12px",
-                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)", 
+                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
               }}
             >
               <img
@@ -94,26 +93,25 @@ function CartInfo() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: "column", 
+                flexDirection: "column",
                 justifyContent: "center",
-                gap: 2, 
-                padding: 3, 
+                gap: 2,
+                padding: 3,
               }}
             >
-               <h1 className="text-2xl whitespace-nowrap">{title}</h1>
+              <h1 className="text-2xl whitespace-nowrap">{title}</h1>
               <p>
                 <span className={styles["font-semibold"]}>Category: </span>
                 <span className={styles["font-light"]}>{category}</span>
               </p>
               <p>
                 <span className={styles["font-semibold"]}>Price: </span>
-                <span className={styles["font-light"]}>{price}</span>
+                <span className={styles["font-light"]}>{unitPrice}</span>
               </p>
               <p>
                 <span className={styles["font-semibold"]}>Quaintity: </span>
-                <span className={styles["font-light"]}>{stock}</span>
+                <span className={styles["font-light"]}>{quantity}</span>
               </p>
-
             </Box>
           </Box>
         </>

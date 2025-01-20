@@ -17,6 +17,7 @@ import {
 import { useRef, useState } from "react";
 import { BASE_URL } from "../constants/baseUrl";
 import downloadImage from "../../public/download.png";
+import { User } from "./UserManagemnt";
 
 interface UserCardProps {
   key: string;
@@ -26,7 +27,7 @@ interface UserCardProps {
     lastName: string;
     email: string;
   };
-  onUpdateUser: (updatedUser: object) => void;
+  onUpdateUser: (updatedUser: User) => void;
   onDeleteUser: (deletedUserId: string) => void;
 }
 
