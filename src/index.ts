@@ -24,12 +24,13 @@ mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
   seedInitialProducts(); // تأكد من أن هذه الدالة لا تسبب أخطاء
 
+  // جميع المسارات ومعالجات الطلبات هنا
   app.use("/user", userRouter);
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
 
-  // معالجة الأخطاء العامة
-  app.use((err: any, req: any, res: any) => {
+  // معالج الأخطاء العام (يجب أن يكون الأخير)
+  app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
     res.status(500).send("Something went wrong!");
   });
