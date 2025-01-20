@@ -1,10 +1,13 @@
-interface CartItem {
-  productId: string;
+interface Product {
+  _id: string;
   title: string;
   image: string;
   category: string;
-  unitPrice: number;
-  quantity: number;
 }
 
+interface CartItem {
+  product: Product;
+  quantity: number;
+  unitPrice: number;
+}
 export default CartItem;

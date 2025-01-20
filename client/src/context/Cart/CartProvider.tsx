@@ -34,13 +34,15 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         const cart = await response.json();
 
         const cartItemsMapped = cart.items.map(
-          ({ product, quantity, unitPrice }: CartItem) => ({
-            productId: product._id,
-            title: product.title,
-            image: product.image,
-            unitPrice: unitPrice,
-            quantity,
-          })
+          ({ product, quantity, unitPrice }: CartItem) => {
+            return {
+              productId: product._id,
+              title: product.title,
+              image: product.image,
+              unitPrice: unitPrice,
+              quantity,
+            };
+          }
         );
 
         setCartItems(cartItemsMapped);
@@ -175,7 +177,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       }
 
       const cartItemsMapped = cart.items.map(
-        ({ product, quantity, unitPrice }) => ({
+        ({ product, quantity, unitPrice }: CartItem) => ({
           productId: product._id,
           title: product.title,
           image: product.image,
