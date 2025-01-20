@@ -39,7 +39,7 @@ const CartPage = () => {
     <>
       {cartItems?.map((item) => (
         <Box
-          key={item.productId}
+          key={item.product._id}
           display={"flex"}
           alignItems={"center"}
           justifyContent={"space-between"}
@@ -52,7 +52,7 @@ const CartPage = () => {
         >
           <Box display={"flex"} justifyContent={"space-between"} gap={2}>
             <img
-              src={item.image ? item.image : gojoImage}
+              src={item.product.image ? item.product.image : gojoImage}
               width={"150px"}
               style={{
                 maxHeight: "100px",
@@ -62,14 +62,14 @@ const CartPage = () => {
             />
             <Box>
               <Typography fontFamily={"inherit"} variant="h5">
-                {item.title}
+                {item.product.title}
               </Typography>
               <Typography fontFamily={"inherit"}>
                 {item.quantity} x {item.unitPrice} YE
               </Typography>
               <Button
                 variant="outlined"
-                onClick={() => handleRemove(item.productId)}
+                onClick={() => handleRemove(item.product._id)}
               >
                 Remove
               </Button>
@@ -78,12 +78,16 @@ const CartPage = () => {
 
           <ButtonGroup variant="contained">
             <Button
-              onClick={() => handleQuantity(item.productId, item.quantity + 1)}
+              onClick={() =>
+                handleQuantity(item.product._id, item.quantity + 1)
+              }
             >
               +
             </Button>
             <Button
-              onClick={() => handleQuantity(item.productId, item.quantity - 1)}
+              onClick={() =>
+                handleQuantity(item.product._id, item.quantity - 1)
+              }
             >
               -
             </Button>

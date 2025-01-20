@@ -52,7 +52,7 @@ const CheckoutPage = () => {
     >
       {cartItems.map((item) => (
         <Box
-          key={item.productId}
+          key={item.product._id}
           display="flex"
           flexDirection="row"
           justifyContent="space-between"
@@ -66,7 +66,7 @@ const CheckoutPage = () => {
             gap={1}
             width="100%"
           >
-            <img src={item.image} width={50} />
+            <img src={item.product.image} width={50} />
             <Box
               display="flex"
               flexDirection="row"
@@ -74,7 +74,7 @@ const CheckoutPage = () => {
               justifyContent="space-between"
               width="100%"
             >
-              <Typography variant="h6">{item.title}</Typography>
+              <Typography variant="h6">{item.product.title}</Typography>
               <Typography>
                 {item.quantity} x {item.unitPrice} EGP
               </Typography>

@@ -17,7 +17,8 @@ function CartInfo() {
     fetchData.then((res) => res.json()).then((data) => setProduct(data));
   }, [id]);
 
-  const { image, quantity, title, unitPrice, category } = product ?? {};
+  const { image, title, category } = product?.product ?? {};
+  const { quantity, unitPrice } = product ?? {};
 
   if (loading) {
     return <EmptySearch />;
