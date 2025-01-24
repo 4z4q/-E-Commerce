@@ -7,6 +7,7 @@ import cartRouter from "./routers/cartRouter";
 import productRouter from "./routers/productRouter";
 import cors from "cors";
 import path from "path";
+import fs from "fs"; 
 
 const app = express();
 const port = process.env.PORT || 4001;
@@ -24,7 +25,16 @@ app.use(
 app.use(express.json());
 
 // Serve static files
-app.use(express.static(path.join(__dirname, "build")));
+const staticPath = path.join(__dirname, "build");
+app.use(express.static(staticPath));
+
+// تحقق من وجود ملف index.html
+const indexPath = path.join(staticPath, "index.html");
+if (fs.existsSync(indexPath)) {
+  console.log("index.html exists at:", indexPath);
+} else {
+  console.error("index.html does NOT exist at:", indexPath);
+}
 
 // Connect to MongoDB
 mongoose
@@ -48,10 +58,10 @@ mongoose.connection.once("open", async () => {
 
   // Catch-all route for SPA
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
+    res.sendFile(indexPath);
   });
 
-  console.log("Serving static files from:", path.join(__dirname, "build"));
+  console.log("Serving static files from:", staticPath);
 
   // Error handling
   app.use((err: any, req: any, res: any, next: any) => {
