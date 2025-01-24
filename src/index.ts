@@ -46,14 +46,13 @@ mongoose.connection.once("open", () => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
   });
 
-  app.use(express.static(path.join(__dirname, "build")));
+  app.use(express.static(path.join(process.cwd(), "client", "dist")));
 
   // توجيه جميع المسارات غير المعروفة إلى index.html
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
+    res.sendFile(path.join(process.cwd(), "client", "dist", "index.html"));
   });
 
-  // معالج الأخطاء العام (يجب أن يكون الأخير)
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
     res.status(500).send("Something went wrong!");
