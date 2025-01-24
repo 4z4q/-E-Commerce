@@ -47,11 +47,6 @@ mongoose.connection.once("open", () => {
 
   console.log("Serving static files from:", path.join(__dirname, "build"));
 
-  // توجيه جميع المسارات غير المعروفة إلى index.html
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "client", "dist", "index.html"));
-  });
-
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
     res.status(500).send("Something went wrong!");
