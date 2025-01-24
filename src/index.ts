@@ -51,6 +51,8 @@ mongoose.connection.once("open", async () => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
   });
 
+  console.log("Serving static files from:", path.join(__dirname, "build"));
+
   // Error handling
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
