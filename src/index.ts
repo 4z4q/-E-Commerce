@@ -25,10 +25,10 @@ app.use(
 app.use(express.json());
 
 // Serve static files
-const staticPath = path.join(__dirname, "build");
+const staticPath = path.join(__dirname, "..", "client", "dist");
 app.use(express.static(staticPath));
 
-// تحقق من وجود ملف index.html
+// Check index.html
 const indexPath = path.join(staticPath, "index.html");
 if (fs.existsSync(indexPath)) {
   console.log("index.html exists at:", indexPath);
@@ -56,20 +56,20 @@ mongoose.connection.once("open", async () => {
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
 
-  // Catch-all route for SPA
+  // مسار عام لتطبيقات الصفحة الواحدة (SPA)
   app.get("*", (req, res) => {
     res.sendFile(indexPath);
   });
 
   console.log("Serving static files from:", staticPath);
 
-  // Error handling
+  // Catch-all route for SPA
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
     res.status(500).json({ message: "Something went wrong!" });
   });
 
-  // Start server
+  // Start Server
   app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
