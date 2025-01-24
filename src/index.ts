@@ -11,6 +11,7 @@ import path from "path";
 const app = express();
 const port = process.env.PORT || 4001;
 
+// Middleware
 app.use(
   cors({
     origin: [
@@ -22,36 +23,41 @@ app.use(
 );
 app.use(express.json());
 
-// تحسين اتصال mongoose
+// Serve static files
+app.use(express.static(path.join(__dirname, "build")));
+
+// Connect to MongoDB
 mongoose
   .connect(process.env.DATABASE_URL || "")
   .then(() => console.log("Connected Successfully"))
   .catch((err) => console.log(`Error Connecting ${err}`));
 
-// تأكد من أن الاتصال قد تم قبل بدء الخادم
-mongoose.connection.once("open", () => {
+// Seed initial products and start server
+mongoose.connection.once("open", async () => {
   console.log("Connected to MongoDB");
-  seedInitialProducts(); // تأكد من أن هذه الدالة لا تسبب أخطاء
+  try {
+    await seedInitialProducts();
+  } catch (err) {
+    console.error("Error seeding initial products:", err);
+  }
 
-  // جميع المسارات ومعالجات الطلبات هنا
+  // Routes
   app.use("/user", userRouter);
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
 
-  // توجيه جميع المسارات غير المعروفة إلى index.html
-  app.use(express.static(path.join(__dirname, "build")));
-
+  // Catch-all route for SPA
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
   });
 
-  console.log("Serving static files from:", path.join(__dirname, "build"));
-
+  // Error handling
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
-    res.status(500).send("Something went wrong!");
+    res.status(500).json({ message: "Something went wrong!" });
   });
 
+  // Start server
   app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
