@@ -38,15 +38,14 @@ mongoose.connection.once("open", () => {
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
 
-  // خدمة الملفات الثابتة (مثل js, css, images)
+  // توجيه جميع المسارات غير المعروفة إلى index.html
   app.use(express.static(path.join(__dirname, "build")));
 
-  // توجيه جميع المسارات غير المعروفة إلى index.html
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
   });
 
-  app.use(express.static(path.join(process.cwd(), "client", "dist")));
+  console.log("Serving static files from:", path.join(__dirname, "build"));
 
   // توجيه جميع المسارات غير المعروفة إلى index.html
   app.get("*", (req, res) => {
