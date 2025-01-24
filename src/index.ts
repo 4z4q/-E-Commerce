@@ -11,7 +11,15 @@ import path from "path";
 const app = express();
 const port = process.env.PORT || 4001;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://client-hzfv.onrender.com",
+      "https://e-commerce-p2d3.onrender.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 app.use(express.json());
 
 // تحسين اتصال mongoose

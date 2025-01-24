@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Box, Button, TextField } from "@mui/material";
+import { Alert, Box, Button, Container, TextField } from "@mui/material";
 import Select from "react-select";
 
 type AlgorithmOption = {
@@ -16,7 +16,6 @@ const options: AlgorithmOption[] = [
   { value: "aes", label: "AES" },
   { value: "rc4", label: "RC4" },
   { value: "dh", label: "DIFFIE-HELLMAN" },
-  
 ];
 
 const EncryptApp = () => {
@@ -131,7 +130,7 @@ const EncryptApp = () => {
   };
 
   return (
-    <div className="container">
+    <Container>
       {alertVisible && (
         <Alert severity="error">Please fill in all fields!</Alert>
       )}
@@ -173,8 +172,40 @@ const EncryptApp = () => {
           onChange={(e) => setText(e.target.value)}
         />
         <TextField
-          label="Key (p,q)"
-          placeholder="Enter p,q (e.g., 61,53)"
+          label={
+            algorithm?.value === "caesar"
+              ? "Shift"
+              : algorithm?.value === "hill"
+                ? "Matrix"
+                : algorithm?.value === "rsa"
+                  ? "p, q"
+                  : algorithm?.value === "dh"
+                    ? "Private Key"
+                    : algorithm?.value === "playfair"
+                      ? "String Key"
+                      : algorithm?.value === "des"
+                        ? "Key must be 8 bytes long"
+                        : algorithm?.value === "aes"
+                          ? "Key must be 8 or 16 or 24 bytes long"
+                          : "Key"
+          }
+          placeholder={
+            algorithm?.value === "caesar"
+              ? "Enter shift value (e.g., 3)"
+              : algorithm?.value === "hill"
+                ? "Enter matrix (e.g., 2x2 matrix)"
+                : algorithm?.value === "rsa"
+                  ? "Enter p, q (e.g., 61,53)"
+                  : algorithm?.value === "dh"
+                    ? "Enter private key"
+                    : algorithm?.value === "playfair"
+                      ? "Enter string key"
+                      : algorithm?.value === "des"
+                        ? "Key must be 8 bytes long"
+                        : algorithm?.value === "aes"
+                          ? "Key must be 8 or 16 or 24 bytes long"
+                          : "Key"
+          }
           value={key}
           onChange={(e) => setKey(e.target.value)}
         />
@@ -216,7 +247,7 @@ const EncryptApp = () => {
           </p>
         )}
       </Box>
-    </div>
+    </Container>
   );
 };
 

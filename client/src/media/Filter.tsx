@@ -17,9 +17,15 @@ const ImageProcessor = () => {
   const [image, setImage] = useState<File | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [operation, setOperation] = useState<string>("negative");
+  const [operation, setOperation] = useState<string>("draw");
   const [subOption, setSubOption] = useState("");
   const [rotationAngle, setRotationAngle] = useState<number>(0);
+  const [scaleFactor, setScaleFactor] = useState<number>(1);
+  const [kernelSize, setKernelSize] = useState<number>(3);
+  const [maxValue, setMaxValue] = useState<number>(255);
+  const [c, setC] = useState<number>(255 / Math.log(1 + 255));
+  const [sigma, setSigma] = useState<number>(0);
+  const [text, setText] = useState("");
 
   const handleSubmit = async () => {
     if (!image) return;
@@ -27,14 +33,34 @@ const ImageProcessor = () => {
 
     const formData = new FormData();
     formData.append("image", image);
-    formData.append("operation", subOption);
+    formData.append("operation", operation);
+    formData.append("subOption", subOption);
 
-    if (operation === "filter") {
+    if (operation === "draw") {
+      formData.append("shape", subOption);
+      formData.append("text", text);
+    } else if (operation === "transform") {
+      if (subOption === "rotate") {
+        formData.append("angle", rotationAngle.toString());
+      } else if (subOption === "scale") {
+        formData.append("scale_factor", scaleFactor.toString());
+      }
+    } else if (operation === "color") {
+      formData.append("color_space", subOption);
+    } else if (operation === "enhance") {
+      if (subOption === "negative") {
+        formData.append("max_value", maxValue.toString());
+      } else if (subOption === "log") {
+        formData.append("c", c.toString());
+      }
+    } else if (operation === "smooth") {
       formData.append("filter", subOption);
-    }
-
-    if (operation === "rotate") {
-      formData.append("angle", rotationAngle.toString());
+      formData.append("kernel_size", kernelSize.toString());
+      if (subOption === "gaussian") {
+        formData.append("sigma", sigma.toString());
+      }
+    } else if (operation === "edge") {
+      formData.append("edge_detector", subOption);
     }
 
     try {
@@ -67,12 +93,18 @@ const ImageProcessor = () => {
   const handleDeleteImage = () => {
     setImage(null);
     setProcessedImage(null);
-    setOperation("negative"); // Reset operation when image is deleted
+    setOperation("draw"); // Reset operation when image is deleted
   };
 
   return (
     <Box
-      sx={{ padding: 4, textAlign: "center", maxWidth: 600, margin: "0 auto" }}
+      component={"form"}
+      sx={{
+        padding: 4,
+        textAlign: "center",
+        maxWidth: 600,
+        margin: "0 auto",
+      }}
     >
       <Typography variant="h4" gutterBottom>
         Image Processing Tool
@@ -96,12 +128,13 @@ const ImageProcessor = () => {
           {isLoading ? <CircularProgress size={20} /> : "Upload Image"}
         </Button>
       </label>
+
       <Box
         display={"flex"}
         alignItems={"center"}
         justifyContent={"center"}
         gap={2}
-        sx={{ position: "relative" }}
+        sx={{ position: "relative", width: "500px" }}
       >
         {image && (
           <Box mt={2}>
@@ -109,7 +142,8 @@ const ImageProcessor = () => {
               src={URL.createObjectURL(image)}
               alt="Uploaded"
               style={{
-                maxWidth: "100%",
+                width: "100%",
+                height: "100%",
                 borderRadius: 8,
                 position: "relative",
               }}
@@ -128,7 +162,7 @@ const ImageProcessor = () => {
             <img
               src={processedImage}
               alt="Processed"
-              style={{ maxWidth: "100%", borderRadius: 8 }}
+              style={{ width: "100%", borderRadius: 8 }}
             />
           </Box>
         )}
@@ -143,48 +177,246 @@ const ImageProcessor = () => {
             setSubOption(""); // Reset subOption when operation changes
           }}
         >
-          <FormControlLabel value="filter" control={<Radio />} label="Filter" />
-          {operation === "filter" && (
+          {/* قسم الرسم */}
+          <FormControlLabel value="draw" control={<Radio />} label="Drawing" />
+          {operation === "draw" && (
             <RadioGroup
               value={subOption}
-              onChange={(e) => {
-                setSubOption(e.target.value);
-              }}
-              style={{ paddingLeft: "20px", marginTop: "10px" }}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
             >
-              <FormControlLabel value="log" control={<Radio />} label="Log" />
-              <FormControlLabel value="median" control={<Radio />} label="Median" />
-              <FormControlLabel value="gaussian" control={<Radio />} label="Gaussian" />
+              <FormControlLabel
+                value="circle"
+                control={<Radio />}
+                label="Circle"
+              />
+              <FormControlLabel
+                value="square"
+                control={<Radio />}
+                label="Square"
+              />
+              <FormControlLabel value="line" control={<Radio />} label="Line" />
+              <FormControlLabel value="text" control={<Radio />} label="Text" />
+              {subOption === "text" && (
+                <TextField
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  variant="outlined"
+                  placeholder="Enter text"
+                  fullWidth
+                  sx={{margin:"0 auto 20px" }}
+                />
+              )}
             </RadioGroup>
           )}
 
-          <FormControlLabel value="enhancement" control={<Radio />} label="Enhancement" />
-          {operation === "enhancement" && (
+          {/* قسم التحويلات */}
+          <FormControlLabel
+            value="transform"
+            control={<Radio />}
+            label="Transformations"
+          />
+          {operation === "transform" && (
             <RadioGroup
               value={subOption}
-              onChange={(e) => {
-                setSubOption(e.target.value);
-                console.log(e.target.value);
-              }}
-              style={{ paddingLeft: "20px", marginTop: "10px" }}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
             >
-              <FormControlLabel value="log" control={<Radio />} label="Log" />
-              <FormControlLabel value="negative" control={<Radio />} label="Negative" />
-              <FormControlLabel value="histogram" control={<Radio />} label="Histogram Equalization" />
+              <FormControlLabel
+                value="rotate"
+                control={<Radio />}
+                label="Rotate"
+              />
+              <FormControlLabel
+                value="scale"
+                control={<Radio />}
+                label="Scale"
+              />
+              <FormControlLabel
+                value="translate"
+                control={<Radio />}
+                label="Translate"
+              />
             </RadioGroup>
           )}
 
-          <FormControlLabel value="rotate" control={<Radio />} label="Rotate" />
+          {/* قسم الأنظمة اللونية */}
+          <FormControlLabel
+            value="color"
+            control={<Radio />}
+            label="Color Spaces"
+          />
+          {operation === "color" && (
+            <RadioGroup
+              value={subOption}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
+            >
+              <FormControlLabel value="hsv" control={<Radio />} label="HSV" />
+              <FormControlLabel value="rgb" control={<Radio />} label="RGB" />
+              <FormControlLabel value="bgr" control={<Radio />} label="BGR" />
+              <FormControlLabel value="gray" control={<Radio />} label="GRAY" />
+            </RadioGroup>
+          )}
+
+          {/* قسم تحسين الصورة */}
+          <FormControlLabel
+            value="enhance"
+            control={<Radio />}
+            label="Enhancement"
+          />
+          {operation === "enhance" && (
+            <RadioGroup
+              value={subOption}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
+            >
+              <FormControlLabel
+                value="histogram"
+                control={<Radio />}
+                label="Histogram"
+              />
+              <FormControlLabel
+                value="negative"
+                control={<Radio />}
+                label="Negative"
+              />
+              <FormControlLabel value="log" control={<Radio />} label="Log" />
+            </RadioGroup>
+          )}
+
+          {/* قسم تنعيم الصورة */}
+          <FormControlLabel
+            value="smooth"
+            control={<Radio />}
+            label="Smoothing"
+          />
+          {operation === "smooth" && (
+            <RadioGroup
+              value={subOption}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
+            >
+              <FormControlLabel
+                value="median"
+                control={<Radio />}
+                label="Median"
+              />
+              <FormControlLabel
+                value="average"
+                control={<Radio />}
+                label="Average"
+              />
+              <FormControlLabel
+                value="gaussian"
+                control={<Radio />}
+                label="Gaussian"
+              />
+            </RadioGroup>
+          )}
+
+          {/* قسم تحديد الحواف */}
+          <FormControlLabel
+            value="edge"
+            control={<Radio />}
+            label="Edge Detection"
+          />
+          {operation === "edge" && (
+            <RadioGroup
+              value={subOption}
+              onChange={(e) => setSubOption(e.target.value)}
+              sx={{ pl: 2, display: "flex", flexDirection: "row", gap: 2 }}
+            >
+              <FormControlLabel
+                value="laplacian"
+                control={<Radio />}
+                label="Laplacian"
+              />
+              <FormControlLabel
+                value="difference"
+                control={<Radio />}
+                label="Difference"
+              />
+              <FormControlLabel
+                value="canny"
+                control={<Radio />}
+                label="Canny"
+              />
+              <FormControlLabel
+                value="sobel"
+                control={<Radio />}
+                label="Sobel"
+              />
+            </RadioGroup>
+          )}
         </RadioGroup>
 
-        {operation === "rotate" && (
+        {/* حقول الإدخال بناءً على العملية المحددة */}
+        {operation === "transform" && subOption === "rotate" && (
           <TextField
             label="Rotation Angle (degrees)"
             type="number"
             value={rotationAngle}
             onChange={(e) => setRotationAngle(Number(e.target.value))}
             fullWidth
+            sx={{ mt: 2 }}
           />
+        )}
+
+        {operation === "transform" && subOption === "scale" && (
+          <TextField
+            label="Scale Factor"
+            type="number"
+            value={scaleFactor}
+            onChange={(e) => setScaleFactor(Number(e.target.value))}
+            fullWidth
+            sx={{ mt: 2 }}
+          />
+        )}
+
+        {operation === "enhance" && subOption === "negative" && (
+          <TextField
+            label="Max Value"
+            type="number"
+            value={maxValue}
+            onChange={(e) => setMaxValue(Number(e.target.value))}
+            fullWidth
+            sx={{ mt: 2 }}
+          />
+        )}
+
+        {operation === "enhance" && subOption === "log" && (
+          <TextField
+            label="Constant (c)"
+            type="number"
+            value={c}
+            onChange={(e) => setC(Number(e.target.value))}
+            fullWidth
+            sx={{ mt: 2 }}
+          />
+        )}
+
+        {operation === "smooth" && (
+          <>
+            <TextField
+              label="Kernel Size"
+              type="number"
+              value={kernelSize}
+              onChange={(e) => setKernelSize(Number(e.target.value))}
+              fullWidth
+              sx={{ mt: 2 }}
+            />
+            {subOption === "gaussian" && (
+              <TextField
+                label="Sigma"
+                type="number"
+                value={sigma}
+                onChange={(e) => setSigma(Number(e.target.value))}
+                fullWidth
+                sx={{ mt: 2 }}
+              />
+            )}
+          </>
         )}
 
         <Button
@@ -192,6 +424,7 @@ const ImageProcessor = () => {
           color="primary"
           onClick={handleSubmit}
           disabled={isLoading || !image}
+          sx={{ mt: 2 }}
         >
           {isLoading ? <CircularProgress size={20} /> : "Process Image"}
         </Button>

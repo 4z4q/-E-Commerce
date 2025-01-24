@@ -54,7 +54,7 @@ def encrypt():
             result = rc4(key, text)
 
         elif algorithm == "dh":
-            result = diffie_hellman(text, key)
+            result = diffie_hellman(int(text), int(key))
 
         else:
             result = "Invalid algorithm"
