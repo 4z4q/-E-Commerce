@@ -13,11 +13,20 @@ const app = express();
 const port = process.env.PORT || 4001;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://client-hzfv.onrender.com",
+      "https://e-commerce-p2d3.onrender.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 app.use(express.json());
 
 // Serve static files from the new path
-const staticPath = path.resolve(__dirname, "..", "client", "dist");
+const staticPath = path.join(__dirname, "..", "client", "dist");
+
 app.use(express.static(staticPath));
 
 const indexPath = path.join(staticPath, "index.html");
@@ -29,14 +38,10 @@ if (fs.existsSync(indexPath)) {
 }
 
 // Connect to MongoDB database
-mongoose.set("strictQuery", true);
 mongoose
   .connect(process.env.DATABASE_URL || "")
   .then(() => console.log("Connected Successfully"))
-  .catch((err) => {
-    console.error(`Error Connecting: ${err}`);
-    process.exit(1);
-  });
+  .catch((err) => console.log(`Error Connecting ${err}`));
 
 // Start the server after connecting to the database
 mongoose.connection.once("open", async () => {

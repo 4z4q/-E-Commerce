@@ -3,7 +3,7 @@ from flask_cors import CORS
 from DES import des_decrypt, des_encrypt
 from caesar_cipher import caeser_decryption, caesar_cipher
 from playfair_cipher import playfair_decrypt, playfair_encrypt
-from hill_cipher import hill_decrypt, hill_encrypt
+from hill import hill_decrypt, hill_encrypt
 from RSA import RSA
 from diff import diffie_hellman
 from AES import aes_encrypt, aes_decrypt

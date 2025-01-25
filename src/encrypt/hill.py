@@ -1,7 +1,5 @@
 import numpy as np
-
-
-def text_to_numbers(text: str):
+def text_to_numbers(text):
     """Converts text to numerical values based on A=0, B=1, ..., Z=25.
 
     Parameters:
@@ -18,7 +16,7 @@ def text_to_numbers(text: str):
     return numbers
 
 
-def numbers_to_text(numbers: list[int]) -> str:
+def numbers_to_text(numbers):
     """Converts numerical values back to text based on A=0, B=1, ..., Z=25.
 
     Parameters:
@@ -35,7 +33,7 @@ def numbers_to_text(numbers: list[int]) -> str:
     return text
 
 
-def hill_encrypt(plain_text: str, key_matrix: np.ndarray, filler: str = "X") -> str:
+def hill_encrypt(plain_text, key_matrix, filler="X"):
     """Encrypts a plaintext using the Hill cipher.
 
     Parameters:
@@ -65,13 +63,13 @@ def hill_encrypt(plain_text: str, key_matrix: np.ndarray, filler: str = "X") -> 
     for chunk in chunks:
         chunk_matrix = np.array(chunk).reshape(-1, 1)
         encrypted_chunk = np.dot(key_matrix, chunk_matrix) % 26
-        encrypted_chunks.extend(encrypted_chunk.flatten()) # Convert the matrix to the one dimension
+        encrypted_chunks.extend(encrypted_chunk.flatten())
 
     encrypted_text = numbers_to_text(encrypted_chunks)
     return encrypted_text
 
 
-def hill_decrypt(cipher_text: str, key_matrix: np.ndarray) -> str:
+def hill_decrypt(cipher_text, key_matrix):
     """Decrypts a ciphertext encrypted using the Hill cipher.
 
     Parameters:
@@ -110,7 +108,7 @@ def hill_decrypt(cipher_text: str, key_matrix: np.ndarray) -> str:
 
 
 # Example usage:
-plain_text = "Mohammed"
+plain_text = "ANAS"
 key_matrix_2x2 = np.array([[5, 6], [2, 3]])
 
 encrypted_text_2x2 = hill_encrypt(plain_text, key_matrix_2x2)

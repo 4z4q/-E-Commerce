@@ -10,7 +10,7 @@ def playfair_encrypt(text, key):
         str: The encrypted ciphertext divided into pairs.
     """
 
-    def create_playfair_matrix(key:str):
+    def create_playfair_matrix(key):
         """
         Creates the Playfair cipher matrix (5x5) based on the given key.
 
