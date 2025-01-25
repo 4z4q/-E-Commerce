@@ -7,7 +7,7 @@ import cartRouter from "./routers/cartRouter";
 import productRouter from "./routers/productRouter";
 import cors from "cors";
 import path from "path";
-import fs from "fs"; 
+import fs from "fs";
 
 const app = express();
 const port = process.env.PORT || 4001;
@@ -24,25 +24,26 @@ app.use(
 );
 app.use(express.json());
 
-// Serve static files
+// Serve static files from the new path
 const staticPath = path.join(__dirname, "..", "client", "dist");
+
 app.use(express.static(staticPath));
 
-// Check index.html
 const indexPath = path.join(staticPath, "index.html");
+
 if (fs.existsSync(indexPath)) {
   console.log("index.html exists at:", indexPath);
 } else {
   console.error("index.html does NOT exist at:", indexPath);
 }
 
-// Connect to MongoDB
+// Connect to MongoDB database
 mongoose
   .connect(process.env.DATABASE_URL || "")
   .then(() => console.log("Connected Successfully"))
   .catch((err) => console.log(`Error Connecting ${err}`));
 
-// Seed initial products and start server
+// Start the server after connecting to the database
 mongoose.connection.once("open", async () => {
   console.log("Connected to MongoDB");
   try {
@@ -51,25 +52,30 @@ mongoose.connection.once("open", async () => {
     console.error("Error seeding initial products:", err);
   }
 
-  // Routes
+  // Define routes
   app.use("/user", userRouter);
   app.use("/products", productRouter);
   app.use("/cart", cartRouter);
 
-  // مسار عام لتطبيقات الصفحة الواحدة (SPA)
+  // Route for single-page applications (SPA)
   app.get("*", (req, res) => {
-    res.sendFile(indexPath);
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send("Frontend build not found.");
+    }
   });
 
-  console.log("Serving static files from:", staticPath);
+  console.log("Static files path:", staticPath);
+  console.log("Index.html path:", indexPath);
 
-  // Catch-all route for SPA
+  // Error handling
   app.use((err: any, req: any, res: any, next: any) => {
     console.error(err.stack);
     res.status(500).json({ message: "Something went wrong!" });
   });
 
-  // Start Server
+  // Start the server
   app.listen(port, () => {
     console.log(`Listening on port ${port}`);
   });
